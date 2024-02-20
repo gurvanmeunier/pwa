@@ -6,7 +6,7 @@ import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorMessage from './pages/ErrorMessage';
 import Details from './pages/Details';
-// import { Link } from "react-router-dom";
+import BookmarksContext from './BookmarksContext';
 
 function App() {
   // Création du routeur

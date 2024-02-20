@@ -14,7 +14,7 @@ const Home = () => {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        const apiKey = '6177547640a64d11a906990c90a656ea';
+        const apiKey = 'fa82dee75ce642389717e874e933c813';
         const url = `https://api.rawg.io/api/games?key=${apiKey}&search=${encodeURI(searchText)}`;
         fetch(url)
         .then( response => response.json() )
