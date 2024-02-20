@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 const Home = () => {
     // On utilise un state pour garder nos données
@@ -14,22 +14,16 @@ const Home = () => {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        const apiKey = 'fa82dee75ce642389717e874e933c813';
-        const url = `https://api.rawg.io/api/games?key=${apiKey}&search=${encodeURI(searchText)}`;
+        // const apiKey = 'fa82dee75ce642389717e874e933c813';
+        // const url = `https://api.rawg.io/api/games?key=${apiKey}&search=${encodeURI(searchText)}`;
+        const url = `/games-api-fallback/games/`;
         fetch(url)
         .then( response => response.json() )
         .then( data => { setGames(data.results) } )
         .catch( () => { alert('Une erreur est survenue') } )
     }
 
-    // const handleSearch = (e) => {
-    //     e.preventDefault();
-    //     const url = 'https://www.formacitron.com/games-api-fallback/games/';
-    //     fetch(url)
-    //         .then( response => response.json() )
-    //         .then( data => { setGames(data.results) } )
-    //         .catch( () => { alert('Une erreur est survenue') } )
-    //     }
+
     return (
         <> {/* Un fragment doit être ajouté pour ne retourner qu'un seul
         composant */}
@@ -45,6 +39,7 @@ const Home = () => {
             <button type="submit" className="bg-blue-700 rounded-rtext-white px-4 py-2">Rechercher</button>
         </form>
         {/* Ajoutons notre liste */}
+        <Link to={'/bookmarks'}>Favoris</Link>
         <ul className="sm:w-full md:w-2/3 mx-auto px-2 text-2xl">
             {games.map(game => (
                 <li className="py-2 px-4 border-b border-gray-500 flex" key={game.id}>
