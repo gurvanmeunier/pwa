@@ -1,17 +1,18 @@
 // import logo from './logo.svg';
 import './App.css';
 
-import React, { useState } from 'react';
-//import { useState } from "react";
+import React, { useState, useRef, useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/Home';
 import Details from './pages/Details';
 import ErrorMessage from './pages/ErrorMessage';
 import BookmarksContext from './BookmarksContext';
 import Bookmarks from './pages/Bookmarks';
-
+import MyShop from './pages/MyShop';
 
 function App() {
+
+  const [install, setInstall] = useState(false);
   // Création du routeur
   const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ function App() {
     {
       path: "/bookmarks",
       element: <Bookmarks />,
+    },
+    {
+      path: "/shop",
+      element: <MyShop />,
     },
   ], { basename: "/" })
 
@@ -42,12 +47,48 @@ function App() {
     }
   ]);
 
+  const deferredPrompt = useRef(null); // Utiliser useRef pour conserverdeferredPrompt à travers les re-rendus
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      deferredPrompt.current = e; // Stocker l'événement dans la propriété.current de la ref
+      console.log("Change prompt", deferredPrompt)
+      setInstall(true);
+    };
+    // On place l'eventListener au démarrage
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => {
+      // On retire l'eventListener à la fermeture
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+  const handleInstall = () => {
+    deferredPrompt.current.prompt();
+    deferredPrompt.current.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        alert("Merci d'avoir installé l'application !")
+      } else {
+        console.log('L\'utilisateur a refusé l\'installation');
+      }
+      deferredPrompt.current = null;
+    });
+    setInstall(false);
+  }
+
   return (
-    
-      <BookmarksContext.Provider value={{bookmarks,setBookmarks}}>
-        <RouterProvider router={router}></RouterProvider>
-      </BookmarksContext.Provider>
-    
+
+    <BookmarksContext.Provider value={{ bookmarks, setBookmarks }}>
+      {install && (
+        <div className="bg-gray-300 shadow-gray-700 p-4 flex items-center">
+          <div className='flex-grow text-center'>Voulez-vous installer
+            l'application sur votre appareil ?</div>
+          <button className="px-4 py-2 rounded text-white bg-teal-600" onClick=
+            {handleInstall}>Installer</button>
+        </div>
+      )}
+      <RouterProvider router={router}></RouterProvider>
+    </BookmarksContext.Provider>
+
   )
 }
 
